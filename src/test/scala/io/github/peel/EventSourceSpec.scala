@@ -1,7 +1,7 @@
 package io.github.peel
 
 import akka.actor.{Actor, ActorSystem}
-import akka.testkit.{TestActorRef, TestKit}
+import akka.testkit.{ImplicitSender, TestActorRef, TestKit}
 import org.scalatest.{Matchers, WordSpecLike, BeforeAndAfterAll}
 import io.github.peel.EventSource.{UnregisterListener, RegisterListener}
 
@@ -21,7 +21,7 @@ class EventSourceSpec extends TestKit(ActorSystem("EventSourceSpec")) with WordS
       val real = TestActorRef[TestEventSource].underlyingActor
       real.receive(RegisterListener(testActor))
       real.receive(UnregisterListener(testActor))
-      real.listeners should be (0)
+      real.listeners.size should be (0)
     }
     "send message to actor after registration" in {
       val testA = TestActorRef[TestEventSource]

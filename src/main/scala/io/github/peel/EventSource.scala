@@ -13,7 +13,7 @@ trait EventSource{
   def sendEvent[T](event: T): Unit
   def eventSourceReceive: Receive
 }
-trait ProductionEventSource{
+trait ProductionEventSource extends EventSource{
   this: Actor =>
 
   var listeners = Vector.empty[ActorRef]
@@ -21,9 +21,7 @@ trait ProductionEventSource{
   def sendEvent[T](event: T):Unit = listeners.foreach{ _ ! event }
 
   def eventSourceReceive: Receive = {
-    case RegisterListener(listener) =>
-      listeners = listener +: listeners
-    case UnregisterListener(listener) =>
-      listeners = listeners filter {_ != listener}
+    case RegisterListener(listener) => listeners = listeners :+ listener
+    case UnregisterListener(listener) => listeners = listeners filter {_ != listener}
   }
 }

@@ -40,7 +40,7 @@ class AltimeterSpec extends TestKit(ActorSystem("AltimeterSpec")) with WordSpecL
       real.rateOfClimb should be (real.maxRateOfClimb)
     }
     "calculate altitude changes" in new Helper{
-      val ref = system.actorOf(Props[Altimeter])
+      val ref = system.actorOf(Props(Altimeter()))
       ref ! EventSource.RegisterListener(testActor)
       ref ! RateChange(1f)
       fishForMessage(){

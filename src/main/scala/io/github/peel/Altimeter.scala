@@ -8,6 +8,7 @@ import io.github.peel.Altimeter.{AltitudeUpdate, RateChange}
 object Altimeter{
   case class RateChange(amount: Float)
   case class AltitudeUpdate(altitude: Double)
+  def apply() = new Altimeter with ProductionEventSource
 }
 class Altimeter extends Actor with ActorLogging {
   this: EventSource =>
