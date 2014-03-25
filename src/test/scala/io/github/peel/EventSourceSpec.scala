@@ -31,5 +31,4 @@ class EventSourceSpec extends TestKit(ActorSystem("EventSourceSpec")) with WordS
       expectMsg(msg)
     }
   }
-
 }
