@@ -35,3 +35,9 @@ class LeadFlightAttendant extends Actor{
     case m => randomAttendant() forward m
   }
 }
+object FlightAttendantPathChecker extends App{
+    val system = akka.actor.ActorSystem("PlaneSimulation")
+    val lead = system.actorOf(Props(new LeadFlightAttendant with AttendantCreationPolicy), "LeadFlightAttendant")
+    Thread.sleep(2000)
+    system.shutdown()
+}
