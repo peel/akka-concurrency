@@ -9,7 +9,8 @@ object Altimeter{
   case class RateChange(amount: Float)
   case class AltitudeUpdate(altitude: Double)
 }
-class Altimeter extends Actor with ActorLogging with EventSource{
+class Altimeter extends Actor with ActorLogging {
+  this: EventSource =>
   implicit val ec = context.dispatcher
   val ceiling = 43000
   val maxRateOfClimb = 5000

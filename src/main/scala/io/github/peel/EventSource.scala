@@ -2,6 +2,7 @@ package io.github.peel
 
 import akka.actor.{Actor, ActorRef}
 import io.github.peel.EventSource.{UnregisterListener, RegisterListener}
+import akka.actor.Actor.Receive
 
 object EventSource {
   case class RegisterListener(listener: ActorRef)
@@ -9,15 +10,15 @@ object EventSource {
 }
 
 trait EventSource{
+  def sendEvent[T](event: T): Unit
+  def eventSourceReceive: Receive
+}
+trait ProductionEventSource{
   this: Actor =>
 
   var listeners = Vector.empty[ActorRef]
 
-  def sendEvent[T](event: T){
-    listeners.foreach{
-      _ ! event
-    }
-  }
+  def sendEvent[T](event: T):Unit = listeners.foreach{ _ ! event }
 
   def eventSourceReceive: Receive = {
     case RegisterListener(listener) =>

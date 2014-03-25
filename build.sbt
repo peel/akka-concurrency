@@ -8,6 +8,6 @@ libraryDependencies ++=
     "com.typesafe.akka" %% "akka-actor" % "2.3.0" ::
     "com.typesafe.akka" %% "akka-testkit" % "2.3.0" % "test" ::
     "com.typesafe.akka" %% "akka-remote" % "2.3.0" ::
-    "org.scalatest" %% "scalatest" % "2.0.M5b" % "test" ::
+    "org.scalatest" %% "scalatest" % "2.1.2" % "test" ::
     Nil
 
