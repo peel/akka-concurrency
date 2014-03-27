@@ -1,14 +1,13 @@
 package io.github.peel
 
 import scala.util.Random
-import java.util.concurrent.TimeUnit
-import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.duration._
 import akka.actor.Actor
 import io.github.peel.FlightAttendant.{Drink, GetDrink}
 
 trait AttendantResponsiveness {
   val maxResponseTimeMS: Int
-  def responseDuration = FiniteDuration(Random.nextInt(maxResponseTimeMS), TimeUnit.MILLISECONDS)
+  def responseDuration = Random.nextInt(maxResponseTimeMS).millis
 }
 object FlightAttendant{
   case class GetDrink(drinkname: String)

@@ -9,14 +9,17 @@ trait AttendantCreationPolicy {
   val numberOfAttenants: Int =8
   def createAttendant: Actor = FlightAttendant()
 }
+
 trait LeadFlightAttendantProvider {
   def newLeadFlightAttendant: Actor = LeadFlightAttendant()
 }
+
 object LeadFlightAttendant {
   case object GetFlightAttendant
   case class Attendant(a: ActorRef)
   def apply() = new LeadFlightAttendant with AttendantCreationPolicy
 }
+
 class LeadFlightAttendant extends Actor{
   this: AttendantCreationPolicy =>
 
