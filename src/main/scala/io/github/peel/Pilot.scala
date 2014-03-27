@@ -1,12 +1,12 @@
 package io.github.peel
 
-import akka.actor.{ActorRef, Identify, Actor}
+import akka.actor.{Terminated, ActorRef, Identify, Actor}
 import io.github.peel.Pilot.{ReadyToGo, RelinquishControl}
 import io.github.peel.Plane.{Controls, GiveMeControl}
 
 trait PilotProvider{
   def newPilot(plane:ActorRef, autopilot:ActorRef, controls:ActorRef, altimeter:ActorRef): Actor = new Pilot(plane, autopilot, controls, altimeter)
-  def newCopilot(plane:ActorRef, autopilot:ActorRef, controls:ActorRef, altimeter:ActorRef): Actor = new Copilot(plane, autopilot, controls, altimeter)
+  def newCopilot(plane:ActorRef, altimeter:ActorRef): Actor = new Copilot(plane, altimeter)
   def newAutopilot: Actor = new Autopilot
 }
 
@@ -26,13 +26,16 @@ class Pilot(plane: ActorRef, autopilot: ActorRef, var controls: ActorRef, altime
       controls = controlSurfaces
   }
 }
-class Copilot(plane: ActorRef, autopilot: ActorRef, var controls: ActorRef, altimeter: ActorRef) extends Actor{
+class Copilot(plane: ActorRef, altimeter: ActorRef) extends Actor{
   var pilot = context.system.deadLetters
   val pilotName = context.system.settings.config.getString("io.github.peel.flightcrew.pilotName")
   def receive =  {
     case ReadyToGo =>
       context.parent ! GiveMeControl
       pilot = context.system.actorFor(s"../$pilotName")
+      context.watch(pilot)
+    case Terminated(_) =>
+      plane ! GiveMeControl
   }
 }
 class Autopilot extends Actor{

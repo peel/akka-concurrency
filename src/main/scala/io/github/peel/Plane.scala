@@ -49,7 +49,7 @@ class Plane extends Actor with ActorLogging{
       Props(new IsolatedStopSupervisor with OneForOneStrategyFactory {
         override def childStarter() {
           context.actorOf(Props(newPilot(plane, autopilot, controls, altimeter)), pilotName)
-          context.actorOf(Props(newCopilot), copilotName)
+          context.actorOf(Props(newCopilot(plane, altimeter)), copilotName)
         }
       }), "Pilots")
     context.actorOf(Props(newLeadFlightAttendant), attendantName)
@@ -67,7 +67,7 @@ class Plane extends Actor with ActorLogging{
   def receive = {
     case GiveMeControl =>
       log info "io.github.peel.Plane giving control."
-      sender ! Controls(controls)
+      sender ! actorForControls("ControlSurfaces")
     case AltitudeUpdate(altitude) =>
       log info s"Altitude is now $altitude"
   }
