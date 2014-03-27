@@ -5,8 +5,7 @@ import akka.testkit.{TestActorRef, TestLatch, ImplicitSender, TestKit}
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 import io.github.peel.Altimeter.{AltitudeUpdate, RateChange}
 import scala.concurrent.Await
-import scala.concurrent.duration.FiniteDuration
-import java.util.concurrent.TimeUnit
+import scala.concurrent.duration._
 
 class AltimeterSpec extends TestKit(ActorSystem("AltimeterSpec")) with WordSpecLike with Matchers with BeforeAndAfterAll with ImplicitSender {
   override def afterAll(){system.shutdown()}
@@ -50,7 +49,7 @@ class AltimeterSpec extends TestKit(ActorSystem("AltimeterSpec")) with WordSpecL
     }
     "send events" in new Helper{
       val (ref, _) = actor()
-      Await.ready(EventSourceSpy.latch, FiniteDuration(1, TimeUnit.SECONDS))
+      Await.ready(EventSourceSpy.latch, 1.second)
       EventSourceSpy.latch.isOpen should be (true)
     }
   }

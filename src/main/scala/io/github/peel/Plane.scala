@@ -9,6 +9,7 @@ import io.github.peel.Pilot.ReadyToGo
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import io.github.peel.IsolatedLifeCycleSupervisor.WaitForStart
+import akka.util.Timeout
 
 object Plane {
   // returns the control surface to the Actor that asks for them
@@ -19,7 +20,7 @@ class Plane extends Actor with ActorLogging{
   this: AltimeterProvider
     with PilotProvider
     with LeadFlightAttendantProvider =>
-
+  implicit val timeout:Timeout = 1.second
   val cfgstr = "io.github.peel.flightcrew"
   val config = context.system.settings.config
   val pilotName = config.getString(s"$cfgstr.pilotName")

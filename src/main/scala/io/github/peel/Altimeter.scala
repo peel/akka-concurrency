@@ -34,9 +34,8 @@ class Altimeter extends Actor with ActorLogging {
       new Actor {
         def receive = {
           case CalculateAltitude(lastTick, tick, roc) =>
-            if(roc == 0) throw new ArithmeticException("Divide by zero")
-            val alt = ((tick - lastTick))/60000.00*(roc*roc)/roc
-            sender ! AltitudeCalculated(tick, alt)
+              val alt = (tick - lastTick) / 60000.00 * roc
+              sender ! AltitudeCalculated(tick, alt)
         }
       }
   ), "AltitudeCalculator")
