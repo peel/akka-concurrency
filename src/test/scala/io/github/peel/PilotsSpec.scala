@@ -9,7 +9,9 @@ import akka.util.Timeout
 import akka.pattern.ask
 import scala.concurrent.duration._
 import scala.concurrent.Await
-import io.github.peel.Plane.GiveMeControl
+import io.github.peel.DrinkingBehaviour.FeelingTipsy
+import io.github.peel.DrinkingBehaviour.FeelingLikeZaphod
+import io.github.peel.FlyingBehaviour.{NewBankCalculator, NewElevatorCalculator}
 
 class FakePilot extends Actor {
   def receive = {
@@ -50,6 +52,28 @@ with ImplicitSender with WordSpecLike with MustMatchers {
     Await.result(a ? IsolatedLifeCycleSupervisor.WaitForStart, 3.seconds)
     system.actorFor(copilotPath) ! Pilot.ReadyToGo
     a
+  }
+
+  "Pilot.becomeZaphod" should{
+    "send new zaphodCalcElevator and zaphodCalcAilerons to FlyingBehaviour" in {
+      pilotsReadyToGo()
+      a ! FeelingLikeZaphod
+      expectMsgAllOf(Pilot.zaphodCalcAilerons)
+      expectMsgAllOf(Pilot.zaphodCalcElevator)
+    }
+  }
+
+  "Pilot.becomeTipsy" should {
+    "send new tipsyCalcElevator and tipsyCalcAilerons to FlyingBehaviour" in {
+      pilotsReadyToGo()
+      a ! FeelingTipsy
+      expectMsgAllClassOf(classOf[NewElevatorCalculator], classOf[NewBankCalculator]) foreach {
+        case NewElevatorCalculator(f) =>
+          f must be(Pilot.tipsyCalcElevator)
+        case NewBankCalculator(f) =>
+          f must be(Pilot.tipsyCalcAilerons)
+      }
+    }
   }
 
   "CoPilot" should {

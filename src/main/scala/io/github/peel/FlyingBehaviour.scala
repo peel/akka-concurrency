@@ -1,15 +1,10 @@
 package io.github.peel
 
-import akka.actor.{FSM, Actor, ActorRef}
+import akka.actor.{Props, FSM, Actor, ActorRef}
 import scala.concurrent.duration._
 import io.github.peel.ControlSurfaces.{StickLeft, StickRight, StickBack, StickForward}
 import io.github.peel.FlyingBehaviour._
-import io.github.peel.ControlSurfaces.StickForward
 import io.github.peel.FlyingBehaviour.Fly
-import io.github.peel.ControlSurfaces.StickRight
-import io.github.peel.ControlSurfaces.StickLeft
-import io.github.peel.FlyingBehaviour.FlightData
-import io.github.peel.ControlSurfaces.StickBack
 import io.github.peel.Plane.{Controls, GiveMeControl}
 import io.github.peel.EventSource.{UnregisterListener, RegisterListener}
 import io.github.peel.HeadingIndicator
@@ -17,6 +12,9 @@ import io.github.peel.Altimeter.AltitudeUpdate
 import io.github.peel.HeadingIndicator.HeadingUpdate
 import io.github.peel.Pilot.RelinquishControl
 
+trait FlyingProvider{
+  def newFlyingBehaviour(plane: ActorRef, heading: ActorRef, altimeter: ActorRef): Props = Props(new FlyingBehaviour(plane, heading, altimeter))
+}
 object FlyingBehaviour {
   sealed trait State
   case object Idle extends State
@@ -27,6 +25,9 @@ object FlyingBehaviour {
   case class CourseStatus(altitude: Double, heading: Float, headingSinceMS: Long, altitudeSinceMS: Long)
 
   type Calculator = (CourseTarget, CourseStatus) => Any
+
+  case class NewElevatorCalculator(f: Calculator)
+  case class NewBankCalculator(f: Calculator)
 
   sealed trait Data
   case object Uninitialized extends Data
@@ -128,6 +129,10 @@ class FlyingBehaviour(plane: ActorRef, heading: ActorRef, altimeter: ActorRef) e
       stay using d.copy(status=d.status.copy(heading=head, headingSinceMS = currentMS))
     case Event(Adjust, d: FlightData) =>
       stay using adjust(d)
+    case Event(NewBankCalculator(f), d: FlightData) =>
+      stay using d.copy(bankCalc = f)
+    case Event(NewElevatorCalculator(f), d: FlightData) =>
+      stay using d.copy(elevCalc = f)
   }
 
   onTransition {
