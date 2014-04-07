@@ -4,6 +4,7 @@ import akka.actor.{Props, Actor, ActorRef}
 import scala.concurrent.duration._
 import scala.util.Random
 import io.github.peel.DrinkingBehaviour.{FeelingLikeZaphod, FeelingTipsy, FeelingSober, LevelChanged}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 object DrinkingBehaviour {
   case class LevelChanged(level: Float)

@@ -7,6 +7,10 @@ import io.github.peel.HeadingIndicator.{HeadingUpdate, BankChange}
 object HeadingIndicator{
   case class BankChange(amount: Float)
   case class HeadingUpdate(heading: Float)
+  def apply() = new HeadingIndicator with ProductionEventSource
+}
+trait HeadingIndicatorProvider{
+  def newHeadingIndicator: Actor = HeadingIndicator()
 }
 trait HeadingIndicator extends Actor with ActorLogging{
   this: EventSource =>

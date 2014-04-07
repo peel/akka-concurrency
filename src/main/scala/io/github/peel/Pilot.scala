@@ -8,8 +8,8 @@ import akka.actor.FSM.{CurrentState, Transition, SubscribeTransitionCallBack}
 import io.github.peel.DrinkingBehaviour.{FeelingLikeZaphod, FeelingTipsy, FeelingSober}
 
 trait PilotProvider{
-  def newPilot(plane:ActorRef, autopilot:ActorRef, controls:ActorRef, altimeter:ActorRef): Actor = new Pilot(plane, autopilot, controls, altimeter)
-  def newCopilot(plane:ActorRef, altimeter:ActorRef): Actor = new Copilot(plane, altimeter)
+  def newPilot(plane:ActorRef, autopilot:ActorRef, controls:ActorRef, altimeter:ActorRef): Actor = new Pilot(plane, autopilot, controls, altimeter) with DrinkingProvider with FlyingProvider
+  def newCopilot(plane:ActorRef, altimeter:ActorRef): Actor = new Copilot(plane, altimeter) with FlyingProvider
   def newAutopilot: Actor = new Autopilot
 }
 

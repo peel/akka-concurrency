@@ -3,7 +3,6 @@ package io.github.peel
 import Altimeter.RateChange
 import akka.actor.{Actor, ActorRef}
 import io.github.peel.ControlSurfaces._
-import io.github.peel.HeadingIndicator.BankChange
 import io.github.peel.ControlSurfaces.StickForward
 import io.github.peel.HeadingIndicator.BankChange
 import io.github.peel.Altimeter.RateChange

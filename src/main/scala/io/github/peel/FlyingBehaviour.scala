@@ -5,9 +5,8 @@ import scala.concurrent.duration._
 import io.github.peel.ControlSurfaces.{StickLeft, StickRight, StickBack, StickForward}
 import io.github.peel.FlyingBehaviour._
 import io.github.peel.FlyingBehaviour.Fly
-import io.github.peel.Plane.{Controls, GiveMeControl}
+import io.github.peel.Plane.{LostControl, Controls, GiveMeControl}
 import io.github.peel.EventSource.{UnregisterListener, RegisterListener}
-import io.github.peel.HeadingIndicator
 import io.github.peel.Altimeter.AltitudeUpdate
 import io.github.peel.HeadingIndicator.HeadingUpdate
 import io.github.peel.Pilot.RelinquishControl

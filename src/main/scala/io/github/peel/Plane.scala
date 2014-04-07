@@ -14,12 +14,14 @@ import akka.util.Timeout
 object Plane {
   // returns the control surface to the Actor that asks for them
   case object GiveMeControl
+  case object LostControl
   case class Controls(controls: ActorRef)
 }
 class Plane extends Actor with ActorLogging{
   this: AltimeterProvider
     with PilotProvider
-    with LeadFlightAttendantProvider =>
+    with LeadFlightAttendantProvider
+    with HeadingIndicatorProvider =>
   implicit val timeout:Timeout = 1.second
   val cfgstr = "io.github.peel.flightcrew"
   val config = context.system.settings.config
@@ -34,8 +36,9 @@ class Plane extends Actor with ActorLogging{
       Props(new IsolatedResumeSupervisor with OneForOneStrategyFactory {
         override def childStarter() {
           val alt = context.actorOf(Props(newAltimeter), "Altimeter")
+          val head = context.actorOf(Props(newHeadingIndicator), "HeadingIndicator")
           context.actorOf(Props(newAutopilot), "Autopilot")
-          context.actorOf(Props(new ControlSurfaces(alt)), "ControlSurfaces")
+          context.actorOf(Props(new ControlSurfaces(self, alt, head)), "ControlSurfaces")
         }
       }), "Equipment")
     Await.result(controls ? WaitForStart, 1.second)
